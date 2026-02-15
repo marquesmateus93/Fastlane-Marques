@@ -1,0 +1,74 @@
+default_platform(:android)
+
+def update_package_name_gradle()
+  identifier = ENV["PACKAGE_NAME_FINAL"]
+  gradle_file_path = "../app/build.gradle"
+  UI.message("Updating package name in gradle file to #{identifier}.")
+  if identifier.nil? || identifier.strip.empty?
+    UI.user_error!("PACKAGE_NAME_FINAL is not set.")
+  end
+  content = File.read(gradle_file_path)
+  new_content = content.gsub(/applicationId\s+['"].*?['"]/, "applicationId \"#{identifier}\"")
+  File.open(gradle_file_path, "w") { |file| file.puts new_content}
+end
+
+def get_package_json_version
+  require 'json'
+  package_json_path = "../../package.json"
+  if File.exist?(package_json_path)
+    file = File.read(package_json_path)
+    data = JSON.parse(file)
+    return data["version"]
+  end
+  nil
+end
+
+def increment_versions (versionName, versionCode)
+  android_set_version_name( #Android Version Name - eg: "1.0.0"
+    gradle_file: "app/build.gradle",
+    version_name: versionName
+  )
+
+  android_set_version_code( #Android Version Code - eg: "1"
+    gradle_file: "app/build.gradle",
+    version_code: versionCode
+  )
+end
+
+def variables_validate(vars)
+  missing = vars.select { |var| ENV[var].nil? || ENV[var].strip.empty? }
+  unless missing.empty?
+    puts "Missing required environment variables: #{missing.join(', ')}"
+  end
+end
+
+ENV["CAPITALIZED_FLAVOR"] = ENV["FLAVOR"].capitalize if ENV["FLAVOR"]
+ENV["VERSION_NAME"]       = ENV["VERSION_NAME"] || get_package_json_version
+ENV["PACKAGE_NAME_FINAL"] = ENV["PACKAGE_NAME_BASE"] ? "#{ENV["PACKAGE_NAME_BASE"]}.#{ENV["FLAVOR"]}" : ENV["PACKAGE_NAME"]
+
+lane :deploy_play_store do
+  variables_validate(["VERSION_NAME", "VERSION_CODE", "PACKAGE_NAME_FINAL"])
+
+  increment_versions(ENV["VERSION_NAME"], ENV["VERSION_CODE"])
+
+  update_package_name_gradle()
+
+  android_update_package_identifier(
+    gradleFilePath: "app/build.gradle",
+    newIdentifier: ENV["PACKAGE_NAME_FINAL"]
+  )
+
+  gradle(task: "clean") 
+  gradle(task: "bundle#{ENV["CAPITALIZED_FLAVOR"]}Release")
+
+  upload_to_play_store(
+    aab: "app/build/outputs/bundle/#{ENV["FLAVOR"]}Release/app-#{ENV["FLAVOR"]}-release.aab",
+    track: "internal",
+    release_status: "draft",
+    json_key: "fastlane-marques-sa.json",
+    skip_upload_metadata: true,
+    skip_upload_screenshots: true,
+    skip_upload_images: true,
+    skip_upload_changelogs: true,
+  )
+end

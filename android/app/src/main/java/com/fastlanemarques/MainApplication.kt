@@ -1,4 +1,4 @@
-package com.fastlanemarques
+package com.fastlane.marques.dev
 
 import android.app.Application
 import com.facebook.react.PackageList

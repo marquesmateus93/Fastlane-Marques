@@ -4,3 +4,23 @@ extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autoli
 rootProject.name = 'FastlaneMarques'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// pluginManagement {
+//     includeBuild("../node_modules/@react-native/gradle-plugin")
+//     includeBuild("../node_modules/react-native/packages/react-native-gradle-plugin")
+//     repositories {
+//         gradlePluginPortal()
+//         google()
+//         mavenCentral()
+//         maven {
+//             // Faz o Gradle procurar no node_modules
+//             url("$rootDir/../node_modules/react-native/android")
+//         }
+//         maven {
+//             url("$rootDir/../node_modules/react-native/ReactAndroid")
+//         }
+//     }
+// }
+
+rootProject.name = "FastlaneMarques"
+include(":app")

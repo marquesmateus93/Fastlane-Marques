@@ -1,97 +1,109 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Fastlane Marques
 
-# Getting Started
+Sou engenheiro DevOps e o app tem como objetivo ser um portfólio demonstrativo dos meus conhecimentos de Fastlane. O Fastlane é responsável por buildar e publicar o app tanto na App Store quanto na Google Play Store.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Sobre o projeto
 
-## Step 1: Start Metro
+O **Marques** é um aplicativo mobile multiplataforma (Android e iOS) construído com React Native. A tela inicial exibe o nome do desenvolvedor, uma imagem de boas-vindas e oferece ao usuário:
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- **Tema claro/escuro** — alternância entre modo claro e escuro via switch
+- **Link para LinkedIn** — botão que abre o perfil profissional no LinkedIn
+- **Avaliação do app** — opções "Gostei" ou "Não gostei" que levam a telas de feedback distintas
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+O fluxo de navegação leva o usuário que gostou para uma tela de agradecimento, e o que não gostou para outra tela com resposta humorística.
 
-```sh
-# Using npm
-npm start
+## Tecnologias
 
-# OR using Yarn
-yarn start
+- **React Native** 0.80
+- **TypeScript**
+- **React Navigation** (Stack Navigator)
+- **Fastlane** — automação de build e publicação na App Store e Google Play Store
+
+## Estrutura do app
+
+| Tela        | Descrição                                               |
+|------------|----------------------------------------------------------|
+| Home       | Tela principal com imagem, toggle de tema e botão LinkedIn |
+| You Are Amazing! | Tela exibida quando o usuário clica em "Gostei"     |
+| Ignored!   | Tela exibida quando o usuário clica em "Não gostei"      |
+
+## Pré-requisitos
+
+- **Node.js** >= 18
+- **React Native** — ambiente configurado conforme [documentação oficial](https://reactnative.dev/docs/set-up-your-environment)
+- **Android Studio** (para Android)
+- **Xcode** (para iOS, apenas macOS)
+
+## Como rodar
+
+1. Instale as dependências:
+   ```bash
+   make install
+   ```
+
+2. Execute o app Android:
+   ```bash
+   make start-android
+   ```
+
+3. (Opcional) Para parar o emulador:
+   ```bash
+   make stop-android
+   ```
+
+## Variáveis do Fastlane
+
+As seguintes variáveis são necessárias para executar as lanes do Fastlane:
+
+### Variáveis de ambiente (lane `defs_test`)
+
+| Variável | Obrigatória | Descrição |
+|----------|-------------|-----------|
+| `VERSION_NAME` | Não | Versão do app (ex: `1.0.0`). Se omitida, usa o valor do `package.json`. |
+| `VERSION_CODE` | Sim | Código numérico da versão (ex: `1`, `2`, `15`). |
+| `PACKAGE_NAME` | Condicional | Identificador do pacote (ex: `com.fastlanemarques.dev`). Usado quando `PACKAGE_NAME_BASE` não está definido. |
+| `PACKAGE_NAME_BASE` | Condicional | Base do identificador (ex: `com.fastlanemarques`). Usado junto com `FLAVOR` para gerar `PACKAGE_NAME_FINAL`. |
+| `FLAVOR` | Condicional | Nome do flavor (ex: `dev`, `prod`). Usado quando `PACKAGE_NAME_BASE` está definido; nesse caso `PACKAGE_NAME_FINAL` = `PACKAGE_NAME_BASE.FLAVOR`. |
+
+**Exemplo de uso:**
+```bash
+export VERSION_NAME="1.0.0"
+export VERSION_CODE="16"
+export PACKAGE_NAME="com.fastlanemarques.dev"
+cd android && bundle exec fastlane defs_test
 ```
 
-## Step 2: Build and run your app
+### Assinatura (Android)
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+O build de release requer o arquivo `android/keystore.properties` com:
 
-### Android
+| Propriedade | Descrição |
+|-------------|-----------|
+| `storeFile` | Caminho do arquivo keystore (ex: `fastlane-marques-key.keystore`) |
+| `storePassword` | Senha do keystore |
+| `keyAlias` | Alias da chave |
+| `keyPassword` | Senha da chave |
 
-```sh
-# Using npm
-npm run android
+### Google Play Store
 
-# OR using Yarn
-yarn android
+Para publicação na Play Store, é necessário:
+
+- **Appfile** (`android/fastlane/Appfile`): configurar `json_key_file` com o caminho do arquivo JSON da conta de serviço do Google Cloud.
+- **Arquivo JSON**: credenciais da conta de serviço com permissão para publicar na Play Console (obter em [Google Cloud Console](https://console.cloud.google.com)).
+
+## Deploy (Fastlane)
+
+O projeto inclui Fastlane para build e publicação do app na App Store (iOS) e Google Play Store (Android). Principais lanes:
+
+- **deploy_google_play_store** — gera o bundle para publicação na Google Play
+- **release_test** — build de debug para testes
+- **defs_test** — build de release com versionamento customizado via variáveis de ambiente
+
+```bash
+cd android
+bundle exec fastlane deploy_google_play_store
 ```
 
-### iOS
+## Licença
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Projeto privado.

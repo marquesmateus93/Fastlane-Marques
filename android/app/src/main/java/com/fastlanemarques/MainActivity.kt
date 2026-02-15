@@ -1,4 +1,4 @@
-package com.fastlanemarques
+package com.fastlane.marques.dev
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

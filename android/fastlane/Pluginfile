@@ -1,0 +1,4 @@
+plugins_path = File.join(__dir__, 'fastlane', 'Pluginfile')
+
+gem 'fastlane-plugin-versioning_android'
+gem 'fastlane-plugin-android_update_package_identifier'
