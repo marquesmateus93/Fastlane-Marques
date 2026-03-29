@@ -81,14 +81,14 @@ lane :deploy_play_store do
   gradle(task: "clean") 
   gradle(task: "bundle#{ENV["CAPITALIZED_FLAVOR"]}Release")
 
-  # upload_to_play_store(
-  #   aab: "app/build/outputs/bundle/#{ENV["FLAVOR"]}Release/app-#{ENV["FLAVOR"]}-release.aab",
-  #   track: ENV["TRACK_TYPE"],
-  #   release_status: "draft",
-  #   json_key: ENV["SERVICE_ACCOUNT"],
-  #   skip_upload_metadata: true,
-  #   skip_upload_screenshots: true,
-  #   skip_upload_images: true,
-  #   skip_upload_changelogs: true,
-  # )
+  upload_to_play_store(
+    aab: "app/build/outputs/bundle/#{ENV["FLAVOR"]}Release/app-#{ENV["FLAVOR"]}-release.aab",
+    track: ENV["TRACK_TYPE"],
+    release_status: "draft",
+    json_key: ENV["SERVICE_ACCOUNT"],
+    skip_upload_metadata: true,
+    skip_upload_screenshots: true,
+    skip_upload_images: true,
+    skip_upload_changelogs: true,
+  )
 end
