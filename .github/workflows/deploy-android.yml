@@ -1,0 +1,50 @@
+name: Deploy Android
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - "src/**"
+      - "app/**"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "tsconfig.json"
+      - "babel.config.js"
+      - "metro.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - "android/**"
+      - "android/app/build.gradle"
+      - "android/build.gradle"
+      - "gradle.properties"
+      - ".eslintrc.js"
+      - ".prettierrc"
+      - "jest.config.js"
+
+jobs:
+  deploy-android:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Trigger
+        uses: marquesmateus93/piperoad/actions/act/mobile-trigger@master
+        with:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          RUBY_VERSION: ${{ vars.RUBY_VERSION }}
+          INSTALL_FASTLANE: ${{ vars.INSTALL_FASTLANE }}
+          PACKAGE_NAME_BASE: ${{ vars.PACKAGE_NAME_BASE }}
+          FLAVOR: ${{ vars.FLAVOR }}
+          TRACK_TYPE: ${{ vars.TRACK_TYPE }}
+          WORKING_DIRECTORY: ${{ vars.WORKING_DIRECTORY }}
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          ANDROID_KEYSTORE_PROPERTIES: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
+          NODE_VERSION: ${{ vars.NODE_VERSION }}
+          INSTALL_NODE_MODULES: ${{ vars.INSTALL_NODE_MODULES }}
+          INSTALL_BUNDLER: ${{ vars.INSTALL_BUNDLER }}
+          JAVA_VERSION: ${{ vars.JAVA_VERSION }}
+          JAVA_DISTRIBUTION: ${{ vars.JAVA_DISTRIBUTION }}
+          CMDLINE_TOOLS_VERSION: ${{ vars.CMDLINE_TOOLS_VERSION }}
