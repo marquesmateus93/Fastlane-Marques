@@ -26,12 +26,13 @@ on:
 jobs:
   deploy-android:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     permissions:
       id-token: write
       contents: read
     steps:
-      - name: Trigger
-        uses: marquesmateus93/piperoad/actions/act/mobile-trigger@master
+      - name: Deploy Android
+        uses: marquesmateus93/piperoad/actions/mobile-trigger@master
         with:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           RUBY_VERSION: ${{ vars.RUBY_VERSION }}
