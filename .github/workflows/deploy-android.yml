@@ -46,6 +46,3 @@ jobs:
           NODE_VERSION: ${{ vars.NODE_VERSION }}
           INSTALL_NODE_MODULES: ${{ vars.INSTALL_NODE_MODULES }}
           INSTALL_BUNDLER: ${{ vars.INSTALL_BUNDLER }}
-          JAVA_VERSION: ${{ vars.JAVA_VERSION }}
-          JAVA_DISTRIBUTION: ${{ vars.JAVA_DISTRIBUTION }}
-          CMDLINE_TOOLS_VERSION: ${{ vars.CMDLINE_TOOLS_VERSION }}
