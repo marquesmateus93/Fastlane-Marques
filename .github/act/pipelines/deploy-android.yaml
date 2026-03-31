@@ -1,0 +1,65 @@
+name: Act Deploy Android
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - "src/**"
+      - "app/**"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "tsconfig.json"
+      - "babel.config.js"
+      - "metro.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - "android/**"
+      - "android/app/build.gradle"
+      - "android/build.gradle"
+      - "gradle.properties"
+      - ".eslintrc.js"
+      - ".prettierrc"
+      - "jest.config.js"
+
+env:
+  WORKING_DIRECTORY: .
+  RUBY_VERSION: '3.2'
+  INSTALL_FASTLANE: 'true'
+  PACKAGE_NAME_BASE: 'com.fastlanemarques'
+  FLAVOR: 'dev'
+  TRACK_TYPE: 'internal'
+  NODE_VERSION: '18'
+  INSTALL_NODE_MODULES: 'true'
+  INSTALL_BUNDLER: 'true'
+  JAVA_VERSION: '17'
+  JAVA_DISTRIBUTION: 'temurin'
+  CMDLINE_TOOLS_VERSION: '11076708'
+
+
+jobs:
+  deploy-android:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Trigger
+        uses: marquesmateus93/piperoad/actions/act/mobile-trigger@master
+        with:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
+          RUBY_VERSION: ${{ env.RUBY_VERSION }}
+          INSTALL_FASTLANE: ${{ env.INSTALL_FASTLANE }}
+          PACKAGE_NAME_BASE: ${{ env.PACKAGE_NAME_BASE }}
+          FLAVOR: ${{ env.FLAVOR }}
+          TRACK_TYPE: ${{ env.TRACK_TYPE }}
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          ANDROID_KEYSTORE_PROPERTIES: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
+          NODE_VERSION: ${{ env.NODE_VERSION }}
+          INSTALL_NODE_MODULES: ${{ env.INSTALL_NODE_MODULES }}
+          INSTALL_BUNDLER: ${{ env.INSTALL_BUNDLER }}
+          JAVA_VERSION: ${{ env.JAVA_VERSION }}
+          JAVA_DISTRIBUTION: ${{ env.JAVA_DISTRIBUTION }}
+          CMDLINE_TOOLS_VERSION: ${{ env.CMDLINE_TOOLS_VERSION }}
