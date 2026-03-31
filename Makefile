@@ -1,4 +1,4 @@
-ACT_PIPELINE_PATH	= .github/act/pipelines/trigger.yaml
+ACT_PIPELINE_PATH	= .github/act/pipelines/deploy-android.yaml
 ACT_JSON_PATH		= .github/act/workflow_dispatch_event.json
 ACT_SECRETS_PATH	= .github/act/secrets
 
@@ -6,15 +6,18 @@ help:
 	@echo "Available commands:"
 	@echo ""
 	@echo "  make help       			- Show this help message."
+	@echo "  make helinstall   			- Dependencies install."
 	@echo "  make start-android			- Install dependencies and run the Android app."
 	@echo "  make stop-android			- Kill the Android emulator process."
 	@echo "  make clean      			- Remove caches and temporary files (keeps node_modules)."
 	@echo "  make clean-all  			- Remove everything including node_modules."
-	@echo "  make act-deploy-android  	- Runs the local pipeline by Act."
+	@echo "  make act-deploy-android  	- Runs the local pipeline for Android deploy by Act."
 	@echo ""
 
-start-android:
-	npm install && \
+install: package.json
+	npm install
+
+start-android: install
 	npm run android -- --mode=devDebug
 
 stop-android:
@@ -49,9 +52,9 @@ clean-all: clean
 
 act-deploy-android:
 	@echo "Act Environment Variables:"
-	@echo "ACT_PIPELINE_PATH	= $ACT_PIPELINE_PATH"
-	@echo "ACT_JSON_PATH		= $ACT_JSON_PATH"
-	@echo "ACT_SECRETS_PATH 	= $ACT_SECRETS_PATH"
+	@echo "ACT_PIPELINE_PATH	= ${ACT_PIPELINE_PATH}"
+	@echo "ACT_JSON_PATH		= ${ACT_JSON_PATH}"
+	@echo "ACT_SECRETS_PATH 	= ${ACT_SECRETS_PATH}"
 	@act \
 	workflow_dispatch \
 	-W \
