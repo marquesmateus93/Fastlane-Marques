@@ -1,109 +1,117 @@
 # Fastlane Marques
 
-Sou engenheiro DevOps e o app tem como objetivo ser um portfólio demonstrativo dos meus conhecimentos de Fastlane. O Fastlane é responsável por buildar e publicar o app tanto na App Store quanto na Google Play Store.
+I am a DevOps engineer, and this app is intended to serve as a portfolio showcasing my Fastlane expertise. Fastlane is responsible for building and publishing the app to both the App Store and the Google Play Store. The CI/CD pipelines in this project are powered by [Piperoad](https://github.com/marquesmateus93/piperoad), a dedicated project that centralizes and standardizes reusable automation workflows, enabling scalable and maintainable pipeline management.
 
-## Sobre o projeto
+## About the project
 
-O **Marques** é um aplicativo mobile multiplataforma (Android e iOS) construído com React Native. A tela inicial exibe o nome do desenvolvedor, uma imagem de boas-vindas e oferece ao usuário:
+**Fastlane Marques** is a cross-platform mobile application (Android and iOS) built with React Native. The home screen displays the developer’s name, a welcome image, and offers the user:
 
-- **Tema claro/escuro** — alternância entre modo claro e escuro via switch
-- **Link para LinkedIn** — botão que abre o perfil profissional no LinkedIn
-- **Avaliação do app** — opções "Gostei" ou "Não gostei" que levam a telas de feedback distintas
+- **Light/Dark Theme** — toggle between light and dark mode using a switch  
+- **LinkedIn Link** — a button that opens the professional LinkedIn profile  
+- **App Rating** — options “Liked it” or “Didn’t like it” that lead to different feedback screens  
 
-O fluxo de navegação leva o usuário que gostou para uma tela de agradecimento, e o que não gostou para outra tela com resposta humorística.
+The navigation flow takes users who liked the app to a thank-you screen, and those who didn’t to another screen with a humorous response.
 
-## Tecnologias
+## Technologies
 
-- **React Native** 0.80
-- **TypeScript**
-- **React Navigation** (Stack Navigator)
-- **Fastlane** — automação de build e publicação na App Store e Google Play Store
+- **React Native** 0.80  
+- **TypeScript**  
+- **React Navigation** (Stack Navigator)  
+- **Fastlane** — build and publishing automation for App Store and Google Play Store  
 
-## Estrutura do app
+## Prerequisites
 
-| Tela        | Descrição                                               |
-|------------|----------------------------------------------------------|
-| Home       | Tela principal com imagem, toggle de tema e botão LinkedIn |
-| You Are Amazing! | Tela exibida quando o usuário clica em "Gostei"     |
-| Ignored!   | Tela exibida quando o usuário clica em "Não gostei"      |
+- **Node.js** >= 18  
+- **React Native** — environment set up according to the [official documentation](https://reactnative.dev/docs/set-up-your-environment)  
+- **Android Studio** (for Android)  
+- **Xcode** (for iOS, macOS only)  
 
-## Pré-requisitos
+## How to run
 
-- **Node.js** >= 18
-- **React Native** — ambiente configurado conforme [documentação oficial](https://reactnative.dev/docs/set-up-your-environment)
-- **Android Studio** (para Android)
-- **Xcode** (para iOS, apenas macOS)
-
-## Como rodar
-
-1. Instale as dependências:
-   ```bash
-   make install
-   ```
-
-2. Execute o app Android:
+1. Run the Android app:
    ```bash
    make start-android
    ```
 
-3. (Opcional) Para parar o emulador:
+2. (Optional) Stop the emulator:
    ```bash
    make stop-android
    ```
 
-## Variáveis do Fastlane
+## Fastlane Setup
 
-As seguintes variáveis são necessárias para executar as lanes do Fastlane:
+The following values are required to run Fastlane lanes:
 
-### Variáveis de ambiente (lane `defs_test`)
+### Environment Variables
 
-| Variável | Obrigatória | Descrição |
-|----------|-------------|-----------|
-| `VERSION_NAME` | Não | Versão do app (ex: `1.0.0`). Se omitida, usa o valor do `package.json`. |
-| `VERSION_CODE` | Sim | Código numérico da versão (ex: `1`, `2`, `15`). |
-| `PACKAGE_NAME` | Condicional | Identificador do pacote (ex: `com.fastlanemarques.dev`). Usado quando `PACKAGE_NAME_BASE` não está definido. |
-| `PACKAGE_NAME_BASE` | Condicional | Base do identificador (ex: `com.fastlanemarques`). Usado junto com `FLAVOR` para gerar `PACKAGE_NAME_FINAL`. |
-| `FLAVOR` | Condicional | Nome do flavor (ex: `dev`, `prod`). Usado quando `PACKAGE_NAME_BASE` está definido; nesse caso `PACKAGE_NAME_FINAL` = `PACKAGE_NAME_BASE.FLAVOR`. |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `VERSION_NAME` | App version (e.g., `1.0.0`). If omitted, the value from `package.json` is used. | ❌ |
+| `VERSION_CODE` | Numeric version code (e.g., `1`, `2`, `15`). | ✅ |
+| `PACKAGE_NAME` | Package identifier (e.g., `com.fastlanemarques.dev`). Used when `PACKAGE_NAME_BASE` is not defined. | ⚠️ |
+| `PACKAGE_NAME_BASE` | Base identifier (e.g., `com.fastlanemarques`). Used together with `FLAVOR` to generate `PACKAGE_NAME_FINAL`. | ⚠️ |
+| `FLAVOR` | Flavor name (e.g., `dev`, `prod`). Used when `PACKAGE_NAME_BASE` is defined; in this case `PACKAGE_NAME_FINAL = PACKAGE_NAME_BASE.FLAVOR`. | ⚠️ |
 
-**Exemplo de uso:**
+### Environment Files
+
+| File | Path | Description | Required |
+|------|------|-------------|----------|
+| `Google Service Account (JSON)` | `android/google-service.json` | Service account credentials file used by Fastlane to authenticate and publish the app to the Google Play Store. | ✅ |
+| `Keystore (.keystore/.jks)` | `android/key.keystore` | File used to sign the Android app for release builds. | ✅ |
+| `keystore.properties` | `android/keystore.properties` | Configuration file containing the keystore path, passwords, and key alias used during the signing process. | ✅ |
+
+**Usage Example:**
 ```bash
-export VERSION_NAME="1.0.0"
-export VERSION_CODE="16"
+export VERSION_NAME="0.0.1"
+export VERSION_CODE="1"
 export PACKAGE_NAME="com.fastlanemarques.dev"
-cd android && bundle exec fastlane defs_test
+cd android && bundle exec fastlane deploy_android
 ```
 
-### Assinatura (Android)
+## How to test the pipeline locally
 
-O build de release requer o arquivo `android/keystore.properties` com:
+You can test the Android deploy pipeline locally using Act, which simulates GitHub Actions on your machine.
 
-| Propriedade | Descrição |
-|-------------|-----------|
-| `storeFile` | Caminho do arquivo keystore (ex: `fastlane-marques-key.keystore`) |
-| `storePassword` | Senha do keystore |
-| `keyAlias` | Alias da chave |
-| `keyPassword` | Senha da chave |
+### Prerequisites
 
-### Google Play Store
+- [Act](https://github.com/nektos/act)
+- [Docker](https://docs.docker.com/desktop/setup/install/mac-install/)
 
-Para publicação na Play Store, é necessário:
+### Tree Files
 
-- **Appfile** (`android/fastlane/Appfile`): configurar `json_key_file` com o caminho do arquivo JSON da conta de serviço do Google Cloud.
-- **Arquivo JSON**: credenciais da conta de serviço com permissão para publicar na Play Console (obter em [Google Cloud Console](https://console.cloud.google.com)).
-
-## Deploy (Fastlane)
-
-O projeto inclui Fastlane para build e publicação do app na App Store (iOS) e Google Play Store (Android). Principais lanes:
-
-- **deploy_google_play_store** — gera o bundle para publicação na Google Play
-- **release_test** — build de debug para testes
-- **defs_test** — build de release com versionamento customizado via variáveis de ambiente
-
-```bash
-cd android
-bundle exec fastlane deploy_google_play_store
+```
+.github/
+├── act/
+│   ├── pipelines/
+│   │   └── deploy-android.yaml      #Act pipeline file
+│   ├── secrets                      #Secrets variables file
+│   └── workflow_dispatch_event.json #workflow_dispatch event file simulator
 ```
 
-## Licença
+### Provisioning the secrets
 
-Projeto privado.
+#### Encode the sensitive files
+
+```sh
+base64 -i #{YOUR_GOOGLE_SERVICE_ACCOUNT_FILE_PATH}
+```
+```sh
+base64 -i #{YOUR_KEYSTORE_FILE_PATH}
+```
+```sh
+base64 -i #{YOUR_KEYSTORE_PROPERTIES_FILE_PATH}
+```
+
+#### Save each value into `.github/act/secrets` file
+
+```sh
+GOOGLE_SERVICE_ACCOUNT_JSON='#{YOUR_BASE64_SERVICE_ACCOUNT_ENCODED}'
+ANDROID_KEYSTORE='#{YOUR_BASE64_KEYSTORE_ENCODED}'
+ANDROID_KEYSTORE_PROPERTIES='#{YOUR_BASE64_KEYSTORE_PROPERTIES_ENCODED}'
+```
+
+#### Run the Act
+
+```sh
+make act-deploy-android
+```
